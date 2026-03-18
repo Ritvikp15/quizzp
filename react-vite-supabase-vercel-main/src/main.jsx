@@ -10,6 +10,12 @@ import AuthProvider from "./context/AuthContext.jsx";
 import githubLogo from "/github.svg";
 import SignIn from "./pages/auth/Login.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import CreateQuiz from "./pages/dashboard/CreateQuiz.jsx";
+import MyQuizzes from "./pages/dashboard/MyQuizzes.jsx";
+import Analytics from "./pages/dashboard/Analytics.jsx";
+import Settings from "./pages/dashboard/Settings.jsx";
+import Support from "./pages/dashboard/Support.jsx";
 
 createRoot(document.getElementById("root")).render(
   <div
@@ -35,6 +41,12 @@ createRoot(document.getElementById("root")).render(
               <Route index path="/" element={<App />} />
               <Route index path="/auth/sign-in" element={<SignIn />} />
               <Route index path="/auth/sign-up" element={<SignUp />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard/create-quiz" element={<CreateQuiz />} />
+              <Route path="/dashboard/my-quizzes" element={<MyQuizzes />} />
+              <Route path="/dashboard/analytics" element={<Analytics />} />
+              <Route path="/dashboard/settings" element={<Settings />} />
+              <Route path="/dashboard/support" element={<Support />} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>
