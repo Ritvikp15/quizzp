@@ -35,8 +35,8 @@ createRoot(document.getElementById("root")).render(
     >
       <StrictMode>
         <AuthProvider>
-          <AppBar />
           <BrowserRouter>
+            <AppBar />
             <Routes>
               <Route index path="/" element={<App />} />
               <Route index path="/auth/sign-in" element={<SignIn />} />

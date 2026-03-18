@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -8,31 +8,33 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid2";
 
+import { useAuth } from '../hooks/useAuth';
+import supabase from '../utils/supabase';
+
 function Dashboard() {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
+    const { user, loading } = useAuth();
 
     useEffect(() => {
-        const userData = localStorage.getItem('user');
-        if (userData) {
-            setUser(JSON.parse(userData));
-        } else {
+        if (!loading && !user) {
             navigate('/auth/sign-in');
         }
-    }, [navigate]);
+    }, [user, loading, navigate]);
 
-    const handleLogout = () => {
-        localStorage.removeItem('user');
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
         navigate('/');
     };
 
-    if (!user) {
+    if (loading || !user) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
                 <Typography>Loading...</Typography>
             </Box>
         );
     }
+
+    const displayName = user.user_metadata?.name || user.email;
 
     return (
         <Box sx={{
@@ -72,7 +74,7 @@ function Dashboard() {
                 }}>
                     <CardContent sx={{ p: 4 }}>
                         <Typography variant="h4" fontWeight={700} gutterBottom sx={{ color: '#2e1065' }}>
-                            Welcome back, {user.name}! 👋
+                            Welcome back, {displayName}! 👋
                         </Typography>
                         <Typography variant="body1" sx={{ color: '#6b21a8', mb: 3 }}>
                             Ready to create some amazing quizzes?
@@ -85,14 +87,6 @@ function Dashboard() {
                                     </Typography>
                                     <Typography variant="body1" sx={{ color: '#2e1065' }}>
                                         {user.email}
-                                    </Typography>
-                                </Grid>
-                                <Grid size={{ xs: 12, md: 4 }}>
-                                    <Typography variant="body2" sx={{ color: '#6b21a8', fontWeight: 600 }}>
-                                        Role
-                                    </Typography>
-                                    <Typography variant="body1" sx={{ color: '#2e1065', textTransform: 'capitalize' }}>
-                                        {user.role.replace('_', ' ')}
                                     </Typography>
                                 </Grid>
                                 <Grid size={{ xs: 12, md: 4 }}>

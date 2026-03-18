@@ -15,14 +15,14 @@ const LogIn = () => {
         if (error) {
             toast.error(error.message);
         } else {
-            navigate("/");
             toast.success("Welcome back!");
+            navigate("/dashboard");
         }
     };
 
     return (
         <>
-            <h1>Sign In</h1>
+            <h1>Log In</h1>
             <AccountForm onSubmit={login} />
         </>
     );

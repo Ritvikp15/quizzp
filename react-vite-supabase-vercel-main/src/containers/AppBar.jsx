@@ -1,4 +1,5 @@
 import { useState, memo } from "react";
+import { useNavigate } from "react-router";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -10,120 +11,152 @@ import MenuIcon from "@mui/icons-material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import Avatar from "@mui/material/Avatar";
 
 import { useAuth } from "../hooks/useAuth";
+import supabase from "../utils/supabase";
 
 const pages = [
-  { pageName: "Home", link: "/", protected: null },
-  { pageName: "Features", link: "/#features", protected: null },
-  { pageName: "Pricing", link: "/#pricing", protected: null },
-  { pageName: "Sign In", link: "/auth/sign-in", protected: false },
+    { pageName: "Home", link: "/" },
+    { pageName: "Features", link: "/#features" },
+    { pageName: "Pricing", link: "/#pricing" },
 ];
 
 function ResponsiveAppBar() {
-  const { session, loading } = useAuth();
+    const navigate = useNavigate();
+    const { user, loading } = useAuth();
+    const [anchorElNav, setAnchorElNav] = useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null);
 
-  const [anchorElNav, setAnchorElNav] = useState(null);
+    const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
+    const handleCloseNavMenu = () => setAnchorElNav(null);
+    const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
+    const handleCloseUserMenu = () => setAnchorElUser(null);
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
+    const handleDashboard = () => {
+        navigate('/dashboard');
+        handleCloseUserMenu();
+    };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        navigate('/');
+        handleCloseUserMenu();
+    };
 
-  if (loading) {
-    return null;
-  }
+    if (loading) return null;
 
-  return (
-    <AppBar position="static" sx={{ bgcolor: "#fff", color: "#000" }} elevation={1}>
-      <Container>
-        <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
+    const displayName = user?.user_metadata?.name || user?.email;
 
-          {/* Brand */}
-          <Typography
-            variant="h6"
-            fontWeight={800}
-            component="a"
-            href="/"
-            sx={{ textDecoration: "none", color: "primary.main", letterSpacing: 1 }}
-          >
-            Quizzp
-          </Typography>
+    return (
+        <AppBar position="static" sx={{ bgcolor: "#fff", color: "#000" }} elevation={1}>
+            <Container>
+                <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
 
-          {/* Desktop nav */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1 }}>
-            {pages.map((page) => {
-              if (
-                page.protected === null ||
-                (page.protected === false && !session) ||
-                (page.protected === true && session)
-              ) {
-                return (
-                  <Button
-                    key={page.pageName}
-                    href={page.link}
-                    onClick={handleCloseNavMenu}
-                    sx={{ color: "#000", fontWeight: 500 }}
-                  >
-                    {page.pageName}
-                  </Button>
-                );
-              }
-              return null;
-            })}
-          </Box>
+                    {/* Brand */}
+                    <Typography
+                        variant="h6"
+                        fontWeight={800}
+                        component="a"
+                        href="/"
+                        sx={{ textDecoration: "none", color: "primary.main", letterSpacing: 1 }}
+                    >
+                        Quizzp
+                    </Typography>
 
-          {/* Mobile hamburger */}
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="menu"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              keepMounted
-              transformOrigin={{ vertical: "top", horizontal: "right" }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{ display: { xs: "block", md: "none" } }}
-            >
-              {pages.map((page) => {
-                if (
-                  page.protected === null ||
-                  (page.protected === false && !session) ||
-                  (page.protected === true && session)
-                ) {
-                  return (
-                    <MenuItem key={page.pageName} onClick={handleCloseNavMenu}>
-                      <Link
-                        href={page.link}
-                        sx={{ textDecoration: "none", color: "inherit" }}
-                      >
-                        {page.pageName}
-                      </Link>
-                    </MenuItem>
-                  );
-                }
-                return null;
-              })}
-            </Menu>
-          </Box>
+                    {/* Desktop nav */}
+                    <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1, alignItems: "center" }}>
+                        {pages.map((page) => (
+                            <Button
+                                key={page.pageName}
+                                href={page.link}
+                                onClick={handleCloseNavMenu}
+                                sx={{ color: "#000", fontWeight: 500 }}
+                            >
+                                {page.pageName}
+                            </Button>
+                        ))}
 
-        </Toolbar>
-      </Container>
-    </AppBar>
-  );
+                        {user ? (
+                            <>
+                                <IconButton onClick={handleOpenUserMenu} sx={{ ml: 2 }}>
+                                    <Avatar sx={{ bgcolor: '#7c3aed', width: 40, height: 40, fontWeight: 600, fontSize: '1rem' }}>
+                                        {displayName?.charAt(0).toUpperCase()}
+                                    </Avatar>
+                                </IconButton>
+                                <Menu
+                                    anchorEl={anchorElUser}
+                                    open={Boolean(anchorElUser)}
+                                    onClose={handleCloseUserMenu}
+                                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                                    transformOrigin={{ vertical: "top", horizontal: "right" }}
+                                >
+                                    <MenuItem disabled>
+                                        <Box>
+                                            <Typography variant="body2" fontWeight={600}>{displayName}</Typography>
+                                            <Typography variant="caption" color="text.secondary">{user.email}</Typography>
+                                        </Box>
+                                    </MenuItem>
+                                    <MenuItem onClick={handleDashboard}>Dashboard</MenuItem>
+                                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                </Menu>
+                            </>
+                        ) : (
+                            <Button
+                                variant="contained"
+                                href="/auth/sign-in"
+                                sx={{
+                                    ml: 2,
+                                    background: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
+                                    color: 'white',
+                                    fontWeight: 600,
+                                    textTransform: 'none',
+                                    px: 3,
+                                    '&:hover': { background: 'linear-gradient(135deg, #6d28d9 0%, #9333ea 100%)' }
+                                }}
+                            >
+                                Sign In
+                            </Button>
+                        )}
+                    </Box>
+
+                    {/* Mobile hamburger */}
+                    <Box sx={{ display: { xs: "flex", md: "none" } }}>
+                        <IconButton size="large" aria-label="menu" onClick={handleOpenNavMenu} color="inherit">
+                            <MenuIcon />
+                        </IconButton>
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={anchorElNav}
+                            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                            keepMounted
+                            transformOrigin={{ vertical: "top", horizontal: "right" }}
+                            open={Boolean(anchorElNav)}
+                            onClose={handleCloseNavMenu}
+                            sx={{ display: { xs: "block", md: "none" } }}
+                        >
+                            {pages.map((page) => (
+                                <MenuItem key={page.pageName} onClick={handleCloseNavMenu}>
+                                    <Link href={page.link} sx={{ textDecoration: "none", color: "inherit" }}>
+                                        {page.pageName}
+                                    </Link>
+                                </MenuItem>
+                            ))}
+                            {user ? (
+                                <>
+                                    <MenuItem onClick={handleDashboard}>Dashboard</MenuItem>
+                                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                </>
+                            ) : (
+                                <MenuItem onClick={() => navigate('/auth/sign-in')}>Sign In</MenuItem>
+                            )}
+                        </Menu>
+                    </Box>
+
+                </Toolbar>
+            </Container>
+        </AppBar>
+    );
 }
 
 export default memo(ResponsiveAppBar);
