@@ -16,6 +16,8 @@ import MyQuizzes from "./pages/dashboard/MyQuizzes.jsx";
 import Analytics from "./pages/dashboard/Analytics.jsx";
 import Settings from "./pages/dashboard/Settings.jsx";
 import Support from "./pages/dashboard/Support.jsx";
+import PlayQuiz from './pages/dashboard/PlayQuiz.jsx';
+import JoinQuiz from './pages/JoinQuiz.jsx';
 
 createRoot(document.getElementById("root")).render(
   <div
@@ -47,6 +49,8 @@ createRoot(document.getElementById("root")).render(
               <Route path="/dashboard/analytics" element={<Analytics />} />
               <Route path="/dashboard/settings" element={<Settings />} />
               <Route path="/dashboard/support" element={<Support />} />
+                <Route path="/dashboard/play/:id" element={<PlayQuiz />} />
+                <Route path="/join" element={<JoinQuiz />} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>
