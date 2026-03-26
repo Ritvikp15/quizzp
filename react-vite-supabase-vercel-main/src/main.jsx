@@ -8,8 +8,8 @@ import App from "./App.jsx";
 import AppBar from "./containers/AppBar";
 import AuthProvider from "./context/AuthContext.jsx";
 import githubLogo from "/github.svg";
-import SignIn from "./pages/auth/Login.jsx";
-import SignUp from "./pages/auth/SignUp.jsx";
+import LogIn from "./pages/auth/LoginTemp.jsx";
+import SignUp from "./pages/auth/SignUpTemp.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import CreateQuiz from "./pages/dashboard/CreateQuiz.jsx";
 import MyQuizzes from "./pages/dashboard/MyQuizzes.jsx";
@@ -41,7 +41,7 @@ createRoot(document.getElementById("root")).render(
             <AppBar />
             <Routes>
               <Route index path="/" element={<App />} />
-              <Route index path="/auth/sign-in" element={<SignIn />} />
+              <Route index path="/auth/sign-in" element={<LogIn />} />
               <Route index path="/auth/sign-up" element={<SignUp />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/create-quiz" element={<CreateQuiz />} />

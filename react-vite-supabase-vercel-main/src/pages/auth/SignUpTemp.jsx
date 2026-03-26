@@ -6,7 +6,7 @@ import "./auth.css";
 import AccountForm from "../../containers/AccountForm";
 import supabase from "../../utils/supabase";
 
-const SignUp = () => {
+const SignUpTemp = () => {
     const navigate = useNavigate();
 
     const signUp = async (email, password) => {
@@ -28,4 +28,4 @@ const SignUp = () => {
     );
 };
 
-export default memo(SignUp);
+export default memo(SignUpTemp);
