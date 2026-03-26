@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//mnt/c/Users/ritvi/Downloads/react-vite-supabase-vercel-main/**)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
